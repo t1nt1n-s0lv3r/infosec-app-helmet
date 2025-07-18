@@ -7,7 +7,6 @@ app.use(helmet());
 
 app.use( helmet.hidePoweredBy());
 
-app.use(helmet.frameguard({ action: "deny" }));
 
 app.use(helmet.xssFilter());
 
@@ -15,21 +14,20 @@ app.use(helmet.noSniff());
 
 app.use(helmet.ieNoOpen());
 
-timeInSeconds = 90 * 24 * 60 * 60;
-app.use(helmet.hsts({maxAge: timeInSeconds, force: true}));
-
-app.use(helmet.dnsPrefetchControl());
-
-app.use(helmet.noCache());
-
-app.use(helmet.contentSecurityPolicy({
-  directives:{
-    defaultSrc: ["'self'"],
-    scriptSrc: ["'self'", 'trusted-cdn.com']
-  }
-}))
-
-
+app.use(
+  helmet({
+    frameguard: { action: 'deny' }, // configure
+    contentSecurityPolicy: {        // enable and configure
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "trusted-cdn.com"],
+      },
+    },
+    dnsPrefetchControl: false,      // disable
+    noCache: true,                  // enable
+    hsts: { maxAge: 90 * 24 * 60 * 60, force: true }, // configure
+  })
+);
 
 
 
